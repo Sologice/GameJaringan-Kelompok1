@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8fb8ed39cb973d84bb8ba86aab9f6384
+guid: 6cf2c64899e099a4897a29cf4bb2f259
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Fat Kat
+  - PixelPurl
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
