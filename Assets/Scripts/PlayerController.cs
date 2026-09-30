@@ -7,14 +7,13 @@ using UnityEngine;
 public class PlayerController : NetworkBehaviour
 {
     [Header("Network Sync Variables")]
-    public NetworkVariable<int> health = new(5);
+    public NetworkVariable<int> health = new(10);      // GDD: 10 HP
     public NetworkVariable<float> mana = new(0);
     [SerializeField] private HealthManaUI HMUI;
 
     [Header("Mana Settings")]
     [SerializeField] private float maxMana = 10f;
-    [SerializeField] private float baseMana = 0.02f;
-    [SerializeField] private float rateMana;
+    [SerializeField] private float passiveManaPerSecond = 1f / 3f; // GDD: 1 mana / 3 seconds
 
     [Header("Movement Settings")]
     [SerializeField] private float moveInput;
@@ -29,13 +28,11 @@ public class PlayerController : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (!IsOwner || mana.Value >= maxMana) return;
+        // Passive mana is server-authoritative and only runs while the ball is live
+        if (!IsServer) return;
+        if (GameManager.Instance == null || !GameManager.Instance.ManaCanRegen) return;
 
-        if (baseMana > maxMana - mana.Value)
-            rateMana = maxMana - mana.Value;
-        else rateMana = baseMana;
-
-        UpdateManaServerRpc(rateMana);
+        ServerAddMana(passiveManaPerSecond * Time.fixedDeltaTime);
     }
 
     public override void OnNetworkSpawn()
@@ -59,6 +56,7 @@ public class PlayerController : NetworkBehaviour
 
         inputs.OnTestA += TestA;
         inputs.OnTestB += TestB;
+        inputs.OnServe += OnServePressed;
 
         if (HMUI != null)
         {
@@ -77,6 +75,10 @@ public class PlayerController : NetworkBehaviour
             GetComponent<SpriteRenderer>().color = Color.blue;
         else
             GetComponent<SpriteRenderer>().color = Color.red;
+
+        // Tell the GameManager this player exists. Match starts once 2 are registered.
+        if (IsServer && GameManager.Instance != null)
+            GameManager.Instance.RegisterPlayer(OwnerClientId, this);
     }
 
     public override void OnNetworkDespawn()
@@ -84,9 +86,13 @@ public class PlayerController : NetworkBehaviour
         base.OnNetworkDespawn();
         health.OnValueChanged -= OnHealthChanged;
         mana.OnValueChanged -= OnManaChanged;
- 
+
         inputs.OnTestA -= TestA;
         inputs.OnTestB -= TestB;
+        inputs.OnServe -= OnServePressed;
+
+        if (IsServer && GameManager.Instance != null)
+            GameManager.Instance.UnregisterPlayer(OwnerClientId);
     }
 
     private void OnHealthChanged(int previousValue, int newHealth)
@@ -99,6 +105,23 @@ public class PlayerController : NetworkBehaviour
         if (HMUI != null) HMUI.SetMana(newMana);
     }
 
+    // ---------------------------------------------------------------- Server-side helpers
+    // Called by Ball / GameManager (they already run on the server)
+
+    public void ServerAddMana(float amount)
+    {
+        if (!IsServer) return;
+        mana.Value = Mathf.Clamp(mana.Value + amount, 0f, maxMana);
+    }
+
+    public void ServerTakeDamage(int amount)
+    {
+        if (!IsServer) return;
+        health.Value = Mathf.Max(0, health.Value - amount);
+    }
+
+    // ---------------------------------------------------------------- RPCs
+
     [ServerRpc]
     private void UpdateHealthServerRpc(int amount)
     {
@@ -108,7 +131,22 @@ public class PlayerController : NetworkBehaviour
     [ServerRpc]
     private void UpdateManaServerRpc(float amount)
     {
-        mana.Value += amount;
+        mana.Value = Mathf.Clamp(mana.Value + amount, 0f, maxMana);
+    }
+
+    [ServerRpc]
+    private void RequestServeServerRpc(float aim, ServerRpcParams rpcParams = default)
+    {
+        // Server validates that the sender really is the serving player
+        GameManager.Instance.RequestServe(rpcParams.Receive.SenderClientId, aim);
+    }
+
+    // ---------------------------------------------------------------- Input handlers
+
+    private void OnServePressed()
+    {
+        if (!IsOwner) return;
+        RequestServeServerRpc(inputs.MoveInput.y); // W/S held at release = serve angle
     }
 
     public void TestA()
@@ -126,6 +164,13 @@ public class PlayerController : NetworkBehaviour
     private void MovePlayer()
     {
         if (!IsOwner || inputs == null) return;
+
+        // Frozen until both players are in the match (and after game over)
+        if (GameManager.Instance == null || !GameManager.Instance.CanMove)
+        {
+            Rb2D.linearVelocity = Vector2.zero;
+            return;
+        }
 
         moveInput = inputs.MoveInput.y;
         Rb2D.linearVelocity = new Vector2(0f, moveInput * moveSpeed);

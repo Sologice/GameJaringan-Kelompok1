@@ -32,8 +32,8 @@ Transform:
   m_GameObject: {fileID: 4255094505164098998}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 1}
+  m_LocalPosition: {x: 0.6372, y: 0.0941, z: 0}
+  m_LocalScale: {x: 2.035, y: 8.824646, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -281,7 +281,8 @@ MonoBehaviour:
     m_InternalValue: 0
   HMUI: {fileID: 0}
   maxMana: 10
-  currentMana: 0
+  baseMana: 0.02
+  rateMana: 0
   moveInput: 0
   moveSpeed: 5
   Rb2D: {fileID: 0}

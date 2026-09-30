@@ -141,6 +141,16 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""Serve"",
+                    ""type"": ""Button"",
+                    ""id"": ""69b50cf5-908d-4834-8fbb-798598b9784d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -418,6 +428,17 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""action"": ""TestB"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8b85bba4-660b-4080-bac0-032367b84ad3"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Serve"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -431,6 +452,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         m_Player_Back = m_Player.FindAction("Back", throwIfNotFound: true);
         m_Player_TestA = m_Player.FindAction("TestA", throwIfNotFound: true);
         m_Player_TestB = m_Player.FindAction("TestB", throwIfNotFound: true);
+        m_Player_Serve = m_Player.FindAction("Serve", throwIfNotFound: true);
     }
 
     ~@PlayerInputs()
@@ -516,6 +538,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Back;
     private readonly InputAction m_Player_TestA;
     private readonly InputAction m_Player_TestB;
+    private readonly InputAction m_Player_Serve;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -547,6 +570,10 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/TestB".
         /// </summary>
         public InputAction @TestB => m_Wrapper.m_Player_TestB;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Serve".
+        /// </summary>
+        public InputAction @Serve => m_Wrapper.m_Player_Serve;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -588,6 +615,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @TestB.started += instance.OnTestB;
             @TestB.performed += instance.OnTestB;
             @TestB.canceled += instance.OnTestB;
+            @Serve.started += instance.OnServe;
+            @Serve.performed += instance.OnServe;
+            @Serve.canceled += instance.OnServe;
         }
 
         /// <summary>
@@ -614,6 +644,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @TestB.started -= instance.OnTestB;
             @TestB.performed -= instance.OnTestB;
             @TestB.canceled -= instance.OnTestB;
+            @Serve.started -= instance.OnServe;
+            @Serve.performed -= instance.OnServe;
+            @Serve.canceled -= instance.OnServe;
         }
 
         /// <summary>
@@ -689,5 +722,12 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTestB(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Serve" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnServe(InputAction.CallbackContext context);
     }
 }

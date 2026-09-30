@@ -55,6 +55,16 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "Serve",
+                    "type": "Button",
+                    "id": "69b50cf5-908d-4834-8fbb-798598b9784d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -330,6 +340,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "TestB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8b85bba4-660b-4080-bac0-032367b84ad3",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Serve",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
