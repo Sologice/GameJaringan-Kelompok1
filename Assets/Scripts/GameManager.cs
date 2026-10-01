@@ -68,10 +68,23 @@ public class GameManager : NetworkBehaviour
 
     // ---------------------------------------------------------------- Match flow
 
+    public override void OnNetworkSpawn()
+    {
+        Debug.Log($"[GameManager] Spawned. IsServer={IsServer}");
+        if (IsServer) TryStartMatch(); // retry in case players registered before this spawned
+    }
+
     private void TryStartMatch()
     {
+
         if (!IsSpawned || State.Value != GameState.WaitingForPlayers) return;
         if (players.Count < requiredPlayers) return;
+
+        if (ballPrefab == null)
+        {
+            Debug.LogError("[GameManager] Ball Prefab is not assigned!");
+            return;
+        }
 
         if (ball == null)
         {
@@ -79,7 +92,6 @@ public class GameManager : NetworkBehaviour
             ball.NetworkObject.Spawn();
         }
 
-        // Host serves first
         BeginServe(NetworkManager.ServerClientId);
     }
 
@@ -93,10 +105,34 @@ public class GameManager : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsServer || State.Value != GameState.Serving) return;
+        if (!IsServer) return;
+
+        if (State.Value == GameState.WaitingForPlayers)
+        {
+            SyncPlayersFromNetworkManager();
+            TryStartMatch();
+            return;
+        }
+
+        if (State.Value != GameState.Serving) return;
 
         serveTimer -= Time.deltaTime;
-        if (serveTimer <= 0f) ReleaseBall(0f); // auto-serve straight when time runs out
+        if (serveTimer <= 0f) ReleaseBall(0f);
+    }
+
+    private void SyncPlayersFromNetworkManager()
+    {
+        foreach (var client in NetworkManager.ConnectedClientsList)
+        {
+            if (players.ContainsKey(client.ClientId)) continue;
+            if (client.PlayerObject == null) continue;
+
+            if (client.PlayerObject.TryGetComponent(out PlayerController pc))
+            {
+                players[client.ClientId] = pc;
+                Debug.Log($"[GameManager] Found player for client {client.ClientId}. Total={players.Count}");
+            }
+        }
     }
 
     /// <summary>Called from PlayerController's ServerRpc when the serving player presses Space.</summary>
