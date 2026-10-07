@@ -24,6 +24,11 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private Rigidbody2D Rb2D;
     [SerializeField] private InputManager inputs;
 
+    [Header("Arena Limits")]
+    [Tooltip("Y of the INNER face of the top/bottom red walls (wall center 4 - half thickness 0.5 = 3.5).")]
+    [SerializeField] private float wallInnerY = 3.5f;
+    private Collider2D paddleCol;
+
     /// <summary>Card state of this paddle (length / slow / stun / magnet).</summary>
     public PaddleEffects Effects { get; private set; }
 
@@ -37,6 +42,7 @@ public class PlayerController : NetworkBehaviour
     {
         Effects = GetComponent<PaddleEffects>();
         Cards = GetComponent<PlayerCards>();
+        paddleCol = GetComponent<Collider2D>();
 
         if (Effects == null) Debug.LogError("[PlayerController] Add a PaddleEffects component to the Player prefab.");
         if (Cards == null) Debug.LogError("[PlayerController] Add a PlayerCards component to the Player prefab.");
@@ -238,6 +244,20 @@ public class PlayerController : NetworkBehaviour
         float speedMultiplier = Effects != null ? Effects.SpeedMultiplier.Value : 1f;
 
         moveInput = inputs.MoveInput.y;
-        Rb2D.linearVelocity = new Vector2(0f, moveInput * moveSpeed * speedMultiplier);
+        float velocityY = moveInput * moveSpeed * speedMultiplier;
+
+        // Keep the paddle between the red walls. Done in code so it works whatever the Rigidbody2D body type is
+        // (kinematic bodies are never stopped by static colliders). Uses the collider's size, so Long Paddle etc. still fit.
+        float halfHeight = paddleCol != null ? paddleCol.bounds.extents.y : 0.5f;
+        float limit = Mathf.Max(0f, wallInnerY - halfHeight);
+        float y = Rb2D.position.y;
+
+        if ((y >= limit && velocityY > 0f) || (y <= -limit && velocityY < 0f))
+            velocityY = 0f;
+
+        Rb2D.linearVelocity = new Vector2(0f, velocityY);
+
+        if (Mathf.Abs(y) > limit)
+            Rb2D.position = new Vector2(Rb2D.position.x, Mathf.Clamp(y, -limit, limit));
     }
 }
