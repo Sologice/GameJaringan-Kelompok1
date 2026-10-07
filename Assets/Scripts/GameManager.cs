@@ -36,9 +36,16 @@ public class GameManager : NetworkBehaviour
     public NetworkVariable<GameState> State = new(GameState.WaitingForPlayers);
     public NetworkVariable<ulong> ServingClientId = new(0);
 
+    /// <summary>Who won. Only meaningful while State == GameOver.</summary>
+    public NetworkVariable<ulong> WinnerClientId = new(0);
+
+    /// <summary>How many players pressed "Rematch" on the game over screen (shown as 1/2).</summary>
+    public NetworkVariable<int> RematchVotes = new(0);
+
     // Server only
     private readonly Dictionary<ulong, PlayerController> players = new();
     private readonly List<Ball> decoys = new();
+    private readonly HashSet<ulong> rematchVotes = new();
     private Ball ball;
     private float serveTimer;
 
@@ -72,6 +79,10 @@ public class GameManager : NetworkBehaviour
     {
         if (!IsServer) return;
         players.Remove(clientId);
+        rematchVotes.Remove(clientId);
+
+        // Game over screen stays up so the remaining player can read the result and go back to the menu
+        if (State.Value == GameState.GameOver) return;
 
         // someone left mid-match -> go back to waiting
         if (players.Count < requiredPlayers && State.Value != GameState.WaitingForPlayers)
@@ -100,9 +111,24 @@ public class GameManager : NetworkBehaviour
         Debug.Log($"[GameManager] Spawned. IsServer={IsServer}");
         if (IsServer)
         {
+            // Hosting again after "Main Menu": this in-scene object is reused, so start from a clean state
+            State.Value = GameState.WaitingForPlayers;
+            WinnerClientId.Value = 0;
+            RematchVotes.Value = 0;
+            rematchVotes.Clear();
+
             CardEffectFactory.ValidateAll();
             TryStartMatch(); // retry in case players registered before this spawned
         }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        // Connection ended (back to main menu): forget everything from the old session
+        players.Clear();
+        decoys.Clear();
+        rematchVotes.Clear();
+        ball = null;
     }
 
     private void TryStartMatch()
@@ -217,12 +243,44 @@ public class GameManager : NetworkBehaviour
         {
             ResetRoundEffects();
             ball.Stop();
+
+            WinnerClientId.Value = players.Keys.First(id => id != scoredOn);
+            rematchVotes.Clear();
+            RematchVotes.Value = 0;
             State.Value = GameState.GameOver;
             return;
         }
 
         // Ball respawns on the paddle of the player who just conceded
         BeginServe(scoredOn);
+    }
+
+    // ---------------------------------------------------------------- Rematch
+
+    /// <summary>Game over screen -> "Rematch". The match restarts once every player has asked for it.</summary>
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestRematchServerRpc(ServerRpcParams rpcParams = default)
+    {
+        if (State.Value != GameState.GameOver) return;
+
+        rematchVotes.Add(rpcParams.Receive.SenderClientId);
+        RematchVotes.Value = rematchVotes.Count;
+
+        if (rematchVotes.Count >= requiredPlayers && players.Count >= requiredPlayers)
+            StartRematch();
+    }
+
+    private void StartRematch()
+    {
+        rematchVotes.Clear();
+        RematchVotes.Value = 0;
+
+        foreach (var p in players.Values)
+            if (p != null) p.ServerResetForRematch();
+
+        // TryStartMatch only runs from WaitingForPlayers; it resets cards and serves
+        State.Value = GameState.WaitingForPlayers;
+        TryStartMatch();
     }
 
     // ---------------------------------------------------------------- Card support (server)

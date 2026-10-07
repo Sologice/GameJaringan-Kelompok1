@@ -9,7 +9,8 @@ using UnityEngine;
 public class PlayerController : NetworkBehaviour
 {
     [Header("Network Sync Variables")]
-    public NetworkVariable<int> health = new(10);      // GDD: 10 HP
+    public const int StartHealth = 10;                 // GDD: 10 HP
+    public NetworkVariable<int> health = new(StartHealth);
     public NetworkVariable<float> mana = new(0);
     [SerializeField] private HealthManaUI HMUI;
 
@@ -141,6 +142,23 @@ public class PlayerController : NetworkBehaviour
     {
         if (!IsServer) return;
         health.Value = Mathf.Max(0, health.Value - amount);
+    }
+
+    /// <summary>Rematch: full health, empty mana, paddle back to the middle.</summary>
+    public void ServerResetForRematch()
+    {
+        if (!IsServer) return;
+        health.Value = StartHealth;
+        mana.Value = 0f;
+        ResetPositionClientRpc();
+    }
+
+    [ClientRpc]
+    private void ResetPositionClientRpc()
+    {
+        // The owner moves its own paddle (client authoritative), so every client just sets the y here
+        // and the owner's NetworkTransform pushes it. Cheap and good enough for a rematch.
+        if (IsOwner) transform.position = new Vector3(transform.position.x, 0f, 0f);
     }
 
     /// <summary>New match: clear paddle effects and rebuild the deck order.</summary>

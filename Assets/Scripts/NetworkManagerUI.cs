@@ -31,6 +31,13 @@ public class NetworkManagerUI : MonoBehaviour
         if (deckBuilder != null) deckBuilder.Confirmed -= OnDeckConfirmed;
     }
 
+    /// <summary>Called by the main menu after the connection ended: hide Host / Client until a deck is confirmed again.</summary>
+    public void ResetToStart()
+    {
+        SetConnectButtons(false);
+        if (statusText != null) statusText.text = "STATUS : DISCONNECTED";
+    }
+
     private void OnDeckConfirmed()
     {
         SetConnectButtons(true);
