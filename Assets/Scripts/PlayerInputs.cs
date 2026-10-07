@@ -151,6 +151,36 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""Card1"",
+                    ""type"": ""Button"",
+                    ""id"": ""9101c8ef-1251-4198-86b0-026e03a58b3f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""Card2"",
+                    ""type"": ""Button"",
+                    ""id"": ""13c59848-60b2-4200-8a19-8d81d7f55413"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""Card3"",
+                    ""type"": ""Button"",
+                    ""id"": ""d1a7770c-2194-4ab6-bede-136b5ca447cf"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -439,6 +469,83 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Serve"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7d957776-3a60-4c73-95e5-b3837d35f09e"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Serve"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""962571c6-f7b9-4c74-93b0-47355fb4b9e6"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Card1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aced8981-04f6-45d0-af71-cd7fd68674b1"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Card1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c192ae12-f393-4284-b363-9c9f22421360"",
+                    ""path"": ""<Keyboard>/k"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Card2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6d3a09f3-8d49-48d6-8374-2ae25f2d138f"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Card2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0904ed47-467d-4830-99fb-b3961810dfd7"",
+                    ""path"": ""<Keyboard>/l"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Card3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""57dc33d8-dadf-4920-97c9-df3105043534"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Card3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -453,6 +560,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         m_Player_TestA = m_Player.FindAction("TestA", throwIfNotFound: true);
         m_Player_TestB = m_Player.FindAction("TestB", throwIfNotFound: true);
         m_Player_Serve = m_Player.FindAction("Serve", throwIfNotFound: true);
+        m_Player_Card1 = m_Player.FindAction("Card1", throwIfNotFound: true);
+        m_Player_Card2 = m_Player.FindAction("Card2", throwIfNotFound: true);
+        m_Player_Card3 = m_Player.FindAction("Card3", throwIfNotFound: true);
     }
 
     ~@PlayerInputs()
@@ -539,6 +649,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_TestA;
     private readonly InputAction m_Player_TestB;
     private readonly InputAction m_Player_Serve;
+    private readonly InputAction m_Player_Card1;
+    private readonly InputAction m_Player_Card2;
+    private readonly InputAction m_Player_Card3;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -574,6 +687,18 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Serve".
         /// </summary>
         public InputAction @Serve => m_Wrapper.m_Player_Serve;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Card1".
+        /// </summary>
+        public InputAction @Card1 => m_Wrapper.m_Player_Card1;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Card2".
+        /// </summary>
+        public InputAction @Card2 => m_Wrapper.m_Player_Card2;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Card3".
+        /// </summary>
+        public InputAction @Card3 => m_Wrapper.m_Player_Card3;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -618,6 +743,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Serve.started += instance.OnServe;
             @Serve.performed += instance.OnServe;
             @Serve.canceled += instance.OnServe;
+            @Card1.started += instance.OnCard1;
+            @Card1.performed += instance.OnCard1;
+            @Card1.canceled += instance.OnCard1;
+            @Card2.started += instance.OnCard2;
+            @Card2.performed += instance.OnCard2;
+            @Card2.canceled += instance.OnCard2;
+            @Card3.started += instance.OnCard3;
+            @Card3.performed += instance.OnCard3;
+            @Card3.canceled += instance.OnCard3;
         }
 
         /// <summary>
@@ -647,6 +781,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Serve.started -= instance.OnServe;
             @Serve.performed -= instance.OnServe;
             @Serve.canceled -= instance.OnServe;
+            @Card1.started -= instance.OnCard1;
+            @Card1.performed -= instance.OnCard1;
+            @Card1.canceled -= instance.OnCard1;
+            @Card2.started -= instance.OnCard2;
+            @Card2.performed -= instance.OnCard2;
+            @Card2.canceled -= instance.OnCard2;
+            @Card3.started -= instance.OnCard3;
+            @Card3.performed -= instance.OnCard3;
+            @Card3.canceled -= instance.OnCard3;
         }
 
         /// <summary>
@@ -729,5 +872,26 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnServe(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Card1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCard1(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Card2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCard2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Card3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCard3(InputAction.CallbackContext context);
     }
 }

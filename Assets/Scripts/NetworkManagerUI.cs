@@ -10,10 +10,36 @@ public class NetworkManagerUI : MonoBehaviour
     [SerializeField] private Button clientButton;
     [SerializeField] private TextMeshProUGUI statusText;
 
+    [Header("Cards")]
+    [Tooltip("Optional. If set, Host / Client stay hidden until the player confirmed a 6-card deck.")]
+    [SerializeField] private DeckBuilderUI deckBuilder;
+
     private void Awake()
     {
         hostButton.onClick.AddListener(OnHostButtonClicked);
         clientButton.onClick.AddListener(OnClientButtonClicked);
+
+        if (deckBuilder != null && !deckBuilder.IsConfirmed)
+        {
+            SetConnectButtons(false);
+            deckBuilder.Confirmed += OnDeckConfirmed;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (deckBuilder != null) deckBuilder.Confirmed -= OnDeckConfirmed;
+    }
+
+    private void OnDeckConfirmed()
+    {
+        SetConnectButtons(true);
+    }
+
+    private void SetConnectButtons(bool visible)
+    {
+        hostButton.gameObject.SetActive(visible);
+        clientButton.gameObject.SetActive(visible);
     }
 
     private void OnHostButtonClicked()
@@ -37,7 +63,6 @@ public class NetworkManagerUI : MonoBehaviour
         if (statusText != null)
             statusText.text = message;
 
-        hostButton.gameObject.SetActive(false);
-        clientButton.gameObject.SetActive(false);
+        SetConnectButtons(false);
     }
 }

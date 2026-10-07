@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 4660173539898970892}
   - component: {fileID: 8580973530195983308}
   - component: {fileID: 3340813909841685247}
+  - component: {fileID: 855356316953379731}
+  - component: {fileID: 6123196953948434096}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -182,7 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1476187048
+  GlobalObjectIdHash: 1513514989
   InScenePlacedSourceGlobalObjectIdHash: 1476187048
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -286,3 +288,44 @@ MonoBehaviour:
   moveSpeed: 5
   Rb2D: {fileID: 0}
   inputs: {fileID: 0}
+--- !u!114 &855356316953379731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4255094505164098998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 498c6de21fa53214d9c792e016946716, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PaddleEffects
+  ShowTopMostFoldoutHeaderGroup: 1
+  LengthMultiplier:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 1
+  SpeedMultiplier:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 1
+  Stunned:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+--- !u!114 &6123196953948434096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4255094505164098998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6405fc02afacfd349884b6b096a4e5bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCards
+  ShowTopMostFoldoutHeaderGroup: 1
