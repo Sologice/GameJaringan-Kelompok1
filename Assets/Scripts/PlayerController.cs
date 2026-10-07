@@ -59,6 +59,7 @@ public class PlayerController : NetworkBehaviour
     {
         if (Rb2D == null) Rb2D = GetComponent<Rigidbody2D>();
         if (inputs == null) inputs = GetComponent<InputManager>();
+        if (inputs != null) inputs.ApplyDeviceFilter();
 
         Player targetUI = IsOwnedByServer ? Player.Player1 : Player.Player2;
         foreach (var ui in FindObjectsByType<HealthManaUI>(FindObjectsSortMode.None))

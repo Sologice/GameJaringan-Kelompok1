@@ -44,16 +44,23 @@ public class NetworkManagerUI : MonoBehaviour
 
     private void OnHostButtonClicked()
     {
+        InputManager.LocalDeviceFilter = InputManager.InputDeviceFilter.Auto;
+
         if (NetworkManager.Singleton.StartHost())
-            UpdateUIStatus("Status: Connected as HOST");
+        {
+            string dev = UnityEngine.InputSystem.Gamepad.current != null ? "Gamepad" : "All (No Gamepad detected)";
+            UpdateUIStatus($"Status: Connected as HOST [{dev}]");
+        }
         else
             UpdateUIStatus("Status: Failed to Start Host");
     }
 
     private void OnClientButtonClicked()
     {
+        InputManager.LocalDeviceFilter = InputManager.InputDeviceFilter.KeyboardOnly;
+
         if (NetworkManager.Singleton.StartClient())
-            UpdateUIStatus("Status: Connected as CLIENT");
+            UpdateUIStatus("Status: Connected as CLIENT [Keyboard]");
         else
             UpdateUIStatus("Status: Failed to Start Client");
     }

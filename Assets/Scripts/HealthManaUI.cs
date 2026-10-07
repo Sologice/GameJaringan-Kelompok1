@@ -18,8 +18,8 @@ public class HealthManaUI : MonoBehaviour
     [SerializeField] private Image manaBackground;
 
     [Header("Health Stats")]
-    [SerializeField] private int maxHealth = 5;
-    [SerializeField] private int currentHealth = 5;
+    [SerializeField] private int maxHealth = 10;
+    [SerializeField] private int currentHealth = 10;
 
     [Header("Health Settings")]
     [SerializeField] private List<GameObject> healthList = new();
@@ -31,6 +31,15 @@ public class HealthManaUI : MonoBehaviour
 
         if (!manaBackground) 
             manaBackground = GameObject.Find("HP Background").GetComponentInChildren<Image>();
+        
+        if (healthList.Count != currentHealth)
+        {
+            healthList = null;
+
+            GameObject healthGO = GetComponentInChildren<GridLayoutGroup>().gameObject;
+            foreach (var img in healthGO.GetComponentsInChildren<Image>())
+                healthList.Add(img.gameObject);
+        }
 
         currentFill = currentMana / maxMana;
         UpdateVisual(currentFill);

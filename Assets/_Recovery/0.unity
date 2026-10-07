@@ -1185,8 +1185,8 @@ MonoBehaviour:
   currentFill: 0
   manaFill: {fileID: 1166804336}
   manaBackground: {fileID: 648092027}
-  maxHealth: 5
-  currentHealth: 5
+  maxHealth: 10
+  currentHealth: 10
   healthList:
   - {fileID: 1509381280}
   - {fileID: 234903825}
@@ -2181,8 +2181,8 @@ MonoBehaviour:
   currentFill: 0
   manaFill: {fileID: 1247460110}
   manaBackground: {fileID: 1270735171}
-  maxHealth: 5
-  currentHealth: 5
+  maxHealth: 10
+  currentHealth: 10
   healthList:
   - {fileID: 280812580}
   - {fileID: 859202112}
@@ -3653,6 +3653,7 @@ MonoBehaviour:
   hostButton: {fileID: 1529217223}
   clientButton: {fileID: 1999618285}
   statusText: {fileID: 229989848}
+  deckBuilder: {fileID: 0}
 --- !u!1001 &1940664514
 PrefabInstance:
   m_ObjectHideFlags: 0
