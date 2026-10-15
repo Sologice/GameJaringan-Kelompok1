@@ -6,13 +6,15 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(PaddleEffects))]
 [RequireComponent(typeof(PlayerCards))]
+[RequireComponent(typeof(HealthSystem))]
 public class PlayerController : NetworkBehaviour
 {
     [Header("Network Sync Variables")]
     public const int StartHealth = 10;                 // GDD: 10 HP
-    public NetworkVariable<int> health = new(StartHealth);
+    public NetworkVariable<float> health = new(StartHealth);
     public NetworkVariable<float> mana = new(0);
     [SerializeField] private HealthManaUI HMUI;
+    [SerializeField] private HealthSystem healthSystem;
 
     [Header("Mana Settings")]
     [SerializeField] private float maxMana = 10f;
@@ -35,6 +37,8 @@ public class PlayerController : NetworkBehaviour
     /// <summary>Hand / deck of this player.</summary>
     public PlayerCards Cards { get; private set; }
 
+    public float CurrentHealth => healthSystem != null ? healthSystem.CurrentHealth : health.Value;
+
     /// <summary>x side of this paddle: -1 = left (host), +1 = right (client).</summary>
     public float SideSign => IsOwnedByServer ? -1f : 1f;
 
@@ -42,6 +46,7 @@ public class PlayerController : NetworkBehaviour
     {
         Effects = GetComponent<PaddleEffects>();
         Cards = GetComponent<PlayerCards>();
+        healthSystem = GetComponent<HealthSystem>();
         paddleCol = GetComponent<Collider2D>();
 
         if (Effects == null) Debug.LogError("[PlayerController] Add a PaddleEffects component to the Player prefab.");
@@ -79,7 +84,8 @@ public class PlayerController : NetworkBehaviour
         }
 
         base.OnNetworkSpawn();
-        health.OnValueChanged += OnHealthChanged;
+        healthSystem.OnHealthChanged += OnHealthSystemChanged;
+        health.OnValueChanged += OnNetworkHealthChanged;
         mana.OnValueChanged += OnManaChanged;
 
         inputs.OnTestA += TestA;
@@ -87,9 +93,14 @@ public class PlayerController : NetworkBehaviour
         inputs.OnServe += OnServePressed;
         inputs.OnCard += OnCardPressed;
 
+        if (IsServer)
+            health.Value = healthSystem.CurrentHealth;
+        else
+            healthSystem.SetHealth(health.Value);
+
         if (HMUI != null)
         {
-            HMUI.SetHealth(health.Value);
+            HMUI.SetHealth(healthSystem.CurrentHealth);
             HMUI.SetMana(mana.Value);
         }
 
@@ -113,7 +124,8 @@ public class PlayerController : NetworkBehaviour
     public override void OnNetworkDespawn()
     {
         base.OnNetworkDespawn();
-        health.OnValueChanged -= OnHealthChanged;
+        healthSystem.OnHealthChanged -= OnHealthSystemChanged;
+        health.OnValueChanged -= OnNetworkHealthChanged;
         mana.OnValueChanged -= OnManaChanged;
 
         inputs.OnTestA -= TestA;
@@ -125,9 +137,15 @@ public class PlayerController : NetworkBehaviour
             GameManager.Instance.UnregisterPlayer(OwnerClientId);
     }
 
-    private void OnHealthChanged(int previousValue, int newHealth)
+    private void OnNetworkHealthChanged(float previousValue, float newHealth)
     {
-        if (HMUI != null) HMUI.SetHealth(newHealth);
+        healthSystem.SetHealth(newHealth);
+    }
+
+    private void OnHealthSystemChanged(float currentHealth, float maxHealth)
+    {
+        if (IsServer) health.Value = currentHealth;
+        if (HMUI != null) HMUI.SetHealth(currentHealth);
     }
 
     private void OnManaChanged(float previousValue, float newMana)
@@ -144,17 +162,17 @@ public class PlayerController : NetworkBehaviour
         mana.Value = Mathf.Clamp(mana.Value + amount, 0f, maxMana);
     }
 
-    public void ServerTakeDamage(int amount)
+    public void ServerTakeDamage(float amount)
     {
         if (!IsServer) return;
-        health.Value = Mathf.Max(0, health.Value - amount);
+        healthSystem.TakeDamage(amount);
     }
 
     /// <summary>Rematch: full health, empty mana, paddle back to the middle.</summary>
     public void ServerResetForRematch()
     {
         if (!IsServer) return;
-        health.Value = StartHealth;
+        healthSystem.SetHealth(healthSystem.MaxHealth);
         mana.Value = 0f;
         ResetPositionClientRpc();
     }
@@ -178,9 +196,12 @@ public class PlayerController : NetworkBehaviour
     // ---------------------------------------------------------------- RPCs
 
     [ServerRpc]
-    private void UpdateHealthServerRpc(int amount)
+    private void UpdateHealthServerRpc(float amount)
     {
-        health.Value += amount;
+        if (amount < 0f)
+            healthSystem.TakeDamage(-amount);
+        else
+            healthSystem.Heal(amount);
     }
 
     [ServerRpc]

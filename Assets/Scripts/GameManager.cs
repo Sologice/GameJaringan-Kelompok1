@@ -239,7 +239,7 @@ public class GameManager : NetworkBehaviour
         victim.ServerTakeDamage(1);
         victim.ServerAddMana(manaOnConcede);
 
-        if (victim.health.Value <= 0)
+        if (victim.CurrentHealth <= 0f)
         {
             ResetRoundEffects();
             ball.Stop();
@@ -258,8 +258,8 @@ public class GameManager : NetworkBehaviour
     // ---------------------------------------------------------------- Rematch
 
     /// <summary>Game over screen -> "Rematch". The match restarts once every player has asked for it.</summary>
-    [ServerRpc(RequireOwnership = false)]
-    public void RequestRematchServerRpc(ServerRpcParams rpcParams = default)
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    public void RequestRematchServerRpc(RpcParams rpcParams = default)
     {
         if (State.Value != GameState.GameOver) return;
 

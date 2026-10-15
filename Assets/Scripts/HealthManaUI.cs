@@ -17,10 +17,6 @@ public class HealthManaUI : MonoBehaviour
     [SerializeField] private Image manaFill;
     [SerializeField] private Image manaBackground;
 
-    [Header("Health Stats")]
-    [SerializeField] private int maxHealth = 10;
-    [SerializeField] private int currentHealth = 10;
-
     [Header("Health Settings")]
     [SerializeField] private List<GameObject> healthList = new();
 
@@ -32,13 +28,14 @@ public class HealthManaUI : MonoBehaviour
         if (!manaBackground) 
             manaBackground = GameObject.Find("HP Background").GetComponentInChildren<Image>();
         
-        if (healthList.Count != currentHealth)
+        if (healthList.Count == 0)
         {
-            healthList = null;
-
-            GameObject healthGO = GetComponentInChildren<GridLayoutGroup>().gameObject;
-            foreach (var img in healthGO.GetComponentsInChildren<Image>())
-                healthList.Add(img.gameObject);
+            GridLayoutGroup healthGrid = GetComponentInChildren<GridLayoutGroup>();
+            if (healthGrid != null)
+            {
+                foreach (Image image in healthGrid.GetComponentsInChildren<Image>())
+                    healthList.Add(image.gameObject);
+            }
         }
 
         currentFill = currentMana / maxMana;
@@ -65,11 +62,20 @@ public class HealthManaUI : MonoBehaviour
 
     public void SetHealth(int newHealth)
     {
-        if (newHealth <= maxHealth) currentHealth = newHealth;
+        SetHealth((float)newHealth);
+    }
 
+    public void SetHealth(float newHealth)
+    {
+        float displayedHealth = Mathf.Clamp(newHealth, 0f, healthList.Count);
+        UpdateHealthVisuals(displayedHealth);
+    }
+
+    private void UpdateHealthVisuals(float displayedHealth)
+    {
         for (int i = 0; i < healthList.Count; i++)
         {
-            if (i < currentHealth)
+            if (i < displayedHealth)
                 healthList[i].SetActive(true);
             else
                 healthList[i].SetActive(false);
