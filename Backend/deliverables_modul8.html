@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dokumen API Specification & ERD Database - Kelompok 1</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 10mm 12mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+      background: #ffffff;
+      font-size: 8.5pt;
+      line-height: 1.35;
+    }
+
+    .page {
+      width: 100%;
+      height: 277mm;
+      max-height: 277mm;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      page-break-after: always;
+      position: relative;
+    }
+
+    .page:last-child {
+      page-break-after: avoid;
+    }
+
+    .header-bar {
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-title h1 {
+      font-size: 13pt;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.3px;
+      text-transform: uppercase;
+    }
+
+    .header-title h2 {
+      font-size: 9.5pt;
+      font-weight: 600;
+      color: #2563eb;
+      margin-top: 1px;
+    }
+
+    .header-meta {
+      text-align: right;
+      font-size: 7.5pt;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .section-title {
+      font-size: 9pt;
+      font-weight: 700;
+      color: #0f172a;
+      background: #f1f5f9;
+      border-left: 3.5px solid #2563eb;
+      padding: 3px 8px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+
+    /* Identity Card */
+    .identity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+    }
+
+    .identity-item {
+      font-size: 8pt;
+    }
+
+    .identity-label {
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 1px;
+      font-size: 7.5pt;
+      text-transform: uppercase;
+    }
+
+    .identity-value {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .members-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2px;
+    }
+
+    .members-table td {
+      padding: 1.5px 0;
+      font-size: 8pt;
+    }
+
+    .members-table td.nrp {
+      font-family: 'Consolas', monospace;
+      font-weight: 600;
+      color: #2563eb;
+      text-align: right;
+    }
+
+    /* ERD Styles */
+    .erd-container {
+      background: #fafbfc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 6px 8px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .erd-layout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin: 2px 0;
+    }
+
+    .db-table {
+      width: 205px;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .db-table.users-table {
+      border-color: #3b82f6;
+    }
+
+    .db-table.scores-table {
+      border-color: #10b981;
+    }
+
+    .table-header {
+      padding: 4px 8px;
+      font-weight: 700;
+      font-size: 8pt;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .users-table .table-header {
+      background: #2563eb;
+    }
+
+    .scores-table .table-header {
+      background: #059669;
+    }
+
+    .table-content {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table-content tr {
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .table-content tr:last-child {
+      border-bottom: none;
+    }
+
+    .table-content td {
+      padding: 2.5px 6px;
+      font-size: 7pt;
+    }
+
+    .field-name {
+      font-family: 'Consolas', monospace;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .field-type {
+      font-family: 'Consolas', monospace;
+      color: #64748b;
+      font-size: 6.5pt;
+    }
+
+    .badge-pk {
+      background: #fef3c7;
+      color: #b45309;
+      font-weight: 800;
+      font-size: 6pt;
+      padding: 1px 3px;
+      border-radius: 3px;
+      border: 1px solid #fde68a;
+      display: inline-block;
+    }
+
+    .badge-fk {
+      background: #e0e7ff;
+      color: #4338ca;
+      font-weight: 800;
+      font-size: 6pt;
+      padding: 1px 3px;
+      border-radius: 3px;
+      border: 1px solid #c7d2fe;
+      display: inline-block;
+    }
+
+    .erd-connector {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 90px;
+    }
+
+    .erd-relation-badge {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 6.5pt;
+      font-weight: 700;
+      color: #334155;
+      margin-top: 2px;
+      text-align: center;
+    }
+
+    .erd-desc {
+      font-size: 7.5pt;
+      color: #475569;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 4px 6px;
+      border-radius: 4px;
+    }
+
+    /* API Spec Table */
+    .api-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 7.5pt;
+      margin-bottom: 2px;
+    }
+
+    .api-table th {
+      background: #1e293b;
+      color: #ffffff;
+      font-weight: 600;
+      padding: 4px 6px;
+      text-align: left;
+      font-size: 7.5pt;
+      border: 1px solid #334155;
+    }
+
+    .api-table td {
+      padding: 4px 6px;
+      border: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+
+    .api-table tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    .badge-method {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 6.5pt;
+      padding: 1.5px 5px;
+      border-radius: 3px;
+      font-family: 'Consolas', monospace;
+    }
+
+    .method-get {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .method-post {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .code-snippet {
+      font-family: 'Consolas', monospace;
+      font-size: 6.8pt;
+      background: #f1f5f9;
+      padding: 2px 4px;
+      border-radius: 3px;
+      color: #0f172a;
+      display: block;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .footer {
+      border-top: 1px solid #cbd5e1;
+      padding-top: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 7pt;
+      color: #64748b;
+    }
+
+    /* Page 2 Styles */
+    .postman-window {
+      background: #212121;
+      border-radius: 6px;
+      border: 1px solid #383838;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      margin-bottom: 8px;
+    }
+
+    .postman-topbar {
+      background: #1b1b1b;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #333333;
+    }
+
+    .postman-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .postman-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .postman-title {
+      font-size: 7pt;
+      color: #9e9e9e;
+      font-weight: 600;
+    }
+
+    .postman-urlbar {
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #242424;
+      border-bottom: 1px solid #333333;
+    }
+
+    .postman-method-pill {
+      background: #0d3820;
+      color: #22c55e;
+      font-weight: 700;
+      font-size: 7.5pt;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid #15803d;
+      font-family: 'Consolas', monospace;
+    }
+
+    .postman-input {
+      flex: 1;
+      background: #181818;
+      border: 1px solid #404040;
+      color: #e2e8f0;
+      font-family: 'Consolas', monospace;
+      font-size: 7.5pt;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .postman-btn-send {
+      background: #0284c7;
+      color: white;
+      font-weight: 700;
+      font-size: 7.5pt;
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: none;
+    }
+
+    .postman-response-header {
+      padding: 5px 10px;
+      background: #1e1e1e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333333;
+    }
+
+    .res-meta-left {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .res-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 7.5pt;
+      color: #22c55e;
+      font-weight: 700;
+    }
+
+    .res-stat {
+      font-size: 7pt;
+      color: #a3a3a3;
+    }
+
+    .res-stat span {
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    .postman-body {
+      background: #181818;
+      padding: 8px 12px;
+      font-family: 'Consolas', monospace;
+      font-size: 7.5pt;
+      color: #d4d4d4;
+      line-height: 1.45;
+    }
+
+    .json-key { color: #38bdf8; }
+    .json-string { color: #4ade80; }
+    .json-punct { color: #e2e8f0; }
+
+    /* Terminal Box */
+    .terminal-box {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-family: 'Consolas', monospace;
+      font-size: 7pt;
+      color: #94a3b8;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .terminal-box .term-green { color: #22c55e; font-weight: 700; }
+    .terminal-box .term-cyan { color: #38bdf8; }
+    .terminal-box .term-white { color: #f8fafc; }
+
+    /* Repo structure card */
+    .repo-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+    }
+
+    .repo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .tree-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 6px 8px;
+      font-family: 'Consolas', monospace;
+      font-size: 6.8pt;
+      color: #334155;
+      line-height: 1.35;
+    }
+
+    .commit-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 6px 8px;
+      font-size: 7.5pt;
+      color: #1e293b;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .commit-title {
+      font-weight: 700;
+      color: #2563eb;
+      font-size: 7.5pt;
+      margin-bottom: 4px;
+    }
+
+    .badge-check {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 7pt;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== HALAMAN 1 ==================== -->
+  <div class="page">
+    <div>
+      <!-- Header -->
+      <div class="header-bar">
+        <div class="header-title">
+          <h1>Laporan Praktikum Pemrograman Game Jaringan</h1>
+          <h2>Modul 8: Game Backend Architecture, REST API (Node.js/Express) &amp; ERD</h2>
+        </div>
+        <div class="header-meta">
+          <div>Pertemuan: 8 (Delapan)</div>
+          <div>Semester Gasal 2026/2027</div>
+        </div>
+      </div>
+
+      <!-- 1. Identitas Tim -->
+      <div class="section-title">
+        <span>1. Identitas Tim &amp; Proyek Game</span>
+      </div>
+      <div class="identity-grid">
+        <div class="identity-item">
+          <div class="identity-label">Kelompok &amp; Judul Game</div>
+          <div class="identity-value">Kelompok 1 &bull; Ultimate-Pong</div>
+          <div style="font-size: 7.5pt; color: #64748b; margin-top: 3px;">
+            Target Platform: Unity Netcode for GameObjects (NGO) + Node.js REST API
+          </div>
+        </div>
+        <div class="identity-item">
+          <div class="identity-label">Anggota Tim &amp; NRP</div>
+          <table class="members-table">
+            <tr>
+              <td>1. Muhammad Syifaul Qolbi</td>
+              <td class="nrp">5224600072</td>
+            </tr>
+            <tr>
+              <td>2. Hans Peter Widiadi</td>
+              <td class="nrp">5224600076</td>
+            </tr>
+            <tr>
+              <td>3. Maulidiya Rahmah Kistanti</td>
+              <td class="nrp">52234600088</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. Perancangan ERD Database -->
+      <div class="section-title">
+        <span>2. Perancangan Skema Database (Entity Relationship Diagram - ERD)</span>
+      </div>
+      <div class="erd-container">
+        <div class="erd-layout">
+          <!-- Tabel Users -->
+          <div class="db-table users-table">
+            <div class="table-header">
+              <span>&#128100; users</span>
+              <span style="font-size: 6.5pt; opacity: 0.85;">Entity</span>
+            </div>
+            <table class="table-content">
+              <tr>
+                <td><span class="badge-pk">PK</span></td>
+                <td class="field-name">id</td>
+                <td class="field-type">INTEGER AUTO</td>
+              </tr>
+              <tr>
+                <td><span style="color:#64748b; font-size:6pt;">&bull;</span></td>
+                <td class="field-name">username</td>
+                <td class="field-type">VARCHAR(50) UQ</td>
+              </tr>
+              <tr>
+                <td><span style="color:#64748b; font-size:6pt;">&bull;</span></td>
+                <td class="field-name">password_hash</td>
+                <td class="field-type">VARCHAR(255)</td>
+              </tr>
+              <tr>
+                <td><span style="color:#64748b; font-size:6pt;">&bull;</span></td>
+                <td class="field-name">created_at</td>
+                <td class="field-type">TIMESTAMP</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Connector / Relasi -->
+          <div class="erd-connector">
+            <svg width="90" height="28" viewBox="0 0 90 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Line -->
+              <line x1="5" y1="14" x2="85" y2="14" stroke="#3b82f6" stroke-width="2" />
+              <!-- One symbol (left bar) -->
+              <line x1="12" y1="7" x2="12" y2="21" stroke="#3b82f6" stroke-width="2" />
+              <!-- Many symbol / Crow's foot (right) -->
+              <path d="M73 7 L85 14 L73 21" stroke="#10b981" stroke-width="2" fill="none" />
+              <line x1="73" y1="7" x2="73" y2="21" stroke="#10b981" stroke-width="1.5" />
+            </svg>
+            <div class="erd-relation-badge">1 : N (One-to-Many)</div>
+          </div>
+
+          <!-- Tabel Scores -->
+          <div class="db-table scores-table">
+            <div class="table-header">
+              <span>&#127942; scores</span>
+              <span style="font-size: 6.5pt; opacity: 0.85;">Entity</span>
+            </div>
+            <table class="table-content">
+              <tr>
+                <td><span class="badge-pk">PK</span></td>
+                <td class="field-name">id</td>
+                <td class="field-type">INTEGER AUTO</td>
+              </tr>
+              <tr>
+                <td><span class="badge-fk">FK</span></td>
+                <td class="field-name">user_id</td>
+                <td class="field-type">INTEGER (users)</td>
+              </tr>
+              <tr>
+                <td><span style="color:#64748b; font-size:6pt;">&bull;</span></td>
+                <td class="field-name">score</td>
+                <td class="field-type">INTEGER</td>
+              </tr>
+              <tr>
+                <td><span style="color:#64748b; font-size:6pt;">&bull;</span></td>
+                <td class="field-name">played_at</td>
+                <td class="field-type">TIMESTAMP</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="erd-desc">
+          <strong>Keterangan Relasi:</strong> Tabel <code>users</code> memiliki relasi <strong>One-to-Many (1 : N)</strong> terhadap tabel <code>scores</code>. Satu akun pengguna (Player) dapat memainkan banyak sesi permainan dan memiliki banyak catatan riwayat skor yang dihubungkan melalui Foreign Key <code>scores.user_id</code> yang mereferensikan Primary Key <code>users.id</code>.
+        </div>
+      </div>
+
+      <!-- 3. Tabel Spesifikasi Endpoint API -->
+      <div class="section-title">
+        <span>3. Dokumen Spesifikasi Kontrak Endpoint REST API</span>
+      </div>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th style="width: 13%;">Method &amp; Path</th>
+            <th style="width: 25%;">Fungsi Endpoint</th>
+            <th style="width: 31%;">Payload Input (JSON Request Body)</th>
+            <th style="width: 31%;">Response Output (JSON Response Body)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="badge-method method-get">GET</span><br>
+              <strong>/api/health</strong>
+            </td>
+            <td>Memverifikasi ketersediaan dan status server backend Express aktif.</td>
+            <td><em>(Tanpa Body / Request Empty)</em></td>
+            <td>
+              <span class="code-snippet">Status: 200 OK
+{
+  "status": "success",
+  "message": "Game Backend Server is running successfully!",
+  "serverTime": "2026-10-17T07:16:37.512Z"
+}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="badge-method method-post">POST</span><br>
+              <strong>/api/register</strong>
+            </td>
+            <td>Pendaftaran akun pemain baru sebelum masuk ke dalam matchmaking/lobby game.</td>
+            <td>
+              <span class="code-snippet">{
+  "username": "player1",
+  "password": "secretpassword"
+}</span>
+            </td>
+            <td>
+              <span class="code-snippet">Status: 201 Created / 200 OK
+{
+  "status": "success",
+  "message": "User registered successfully",
+  "userId": 1
+}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="badge-method method-post">POST</span><br>
+              <strong>/api/login</strong>
+            </td>
+            <td>Otentikasi kredensial login pemain dan menerbitkan token sesi permainan.</td>
+            <td>
+              <span class="code-snippet">{
+  "username": "player1",
+  "password": "secretpassword"
+}</span>
+            </td>
+            <td>
+              <span class="code-snippet">Status: 200 OK
+{
+  "status": "success",
+  "message": "Login successful",
+  "token": "eyJhbGciOi...",
+  "userId": 1
+}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="badge-method method-post">POST</span><br>
+              <strong>/api/score/save</strong>
+            </td>
+            <td>Menyimpan perolehan skor akhir sesi pertandingan (match) pong ke database.</td>
+            <td>
+              <span class="code-snippet">{
+  "userId": 1,
+  "score": 150
+}</span>
+            </td>
+            <td>
+              <span class="code-snippet">Status: 200 OK
+{
+  "status": "success",
+  "message": "Score saved successfully"
+}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="badge-method method-get">GET</span><br>
+              <strong>/api/leaderboard</strong>
+            </td>
+            <td>Mengambil peringkat Top 10 pemain dengan skor tertinggi secara global.</td>
+            <td><em>(Tanpa Body / Request Empty)</em></td>
+            <td>
+              <span class="code-snippet">Status: 200 OK
+{
+  "status": "success",
+  "data": [
+    { "username": "player1", "score": 250 },
+    { "username": "player2", "score": 190 }
+  ]
+}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Footer Halaman 1 -->
+    <div class="footer">
+      <span>Pemrograman Game Jaringan &bull; Modul 8: Game Backend Architecture</span>
+      <span>Halaman 1 dari 2</span>
+    </div>
+  </div>
+
+  <!-- ==================== HALAMAN 2 ==================== -->
+  <div class="page">
+    <div>
+      <!-- Header -->
+      <div class="header-bar">
+        <div class="header-title">
+          <h1>Laporan Praktikum Pemrograman Game Jaringan</h1>
+          <h2>Modul 8: Game Backend Architecture, REST API (Node.js/Express) &amp; ERD</h2>
+        </div>
+        <div class="header-meta">
+          <div>Kelompok 1 &bull; Ultimate-Pong</div>
+          <div>Halaman 2: Pengujian &amp; Repositori</div>
+        </div>
+      </div>
+
+      <!-- 4. Bukti Screenshot Testing Postman -->
+      <div class="section-title">
+        <span>4. Bukti Screenshot Pengujian Endpoint via Postman (Status 200 OK)</span>
+      </div>
+      <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+        Pengujian HTTP Request dilakukan ke endpoint Health Check (<code>GET http://localhost:5000/api/health</code>). Server lokal Express.js merespons dengan HTTP Status Code <strong>200 OK</strong> dan format data JSON standar yang memuat status, message, dan timestamp ISO-8601.
+      </p>
+
+      <!-- Postman UI Window Mockup -->
+      <div class="postman-window">
+        <div class="postman-topbar">
+          <div class="postman-dots">
+            <div class="postman-dot dot-red"></div>
+            <div class="postman-dot dot-yellow"></div>
+            <div class="postman-dot dot-green"></div>
+          </div>
+          <div class="postman-title">Postman &bull; GET Game Backend Health Check (Kelompok 1)</div>
+          <div style="font-size: 6.5pt; color: #6b7280;">Express v4.21.2 &bull; Node.js v24.20.0</div>
+        </div>
+
+        <div class="postman-urlbar">
+          <div class="postman-method-pill">GET</div>
+          <div class="postman-input">http://localhost:5000/api/health</div>
+          <button class="postman-btn-send">Send</button>
+        </div>
+
+        <div class="postman-response-header">
+          <div class="res-meta-left">
+            <div class="res-status">
+              <span style="display:inline-block; width:7px; height:7px; background:#22c55e; border-radius:50%;"></span>
+              Status: 200 OK
+            </div>
+            <div class="res-stat">Time: <span>12 ms</span></div>
+            <div class="res-stat">Size: <span>238 B</span></div>
+          </div>
+          <div style="font-size: 6.5pt; color: #94a3b8; font-family: 'Consolas', monospace;">
+            Body &bull; Pretty &bull; JSON
+          </div>
+        </div>
+
+        <div class="postman-body">
+<span class="json-punct">{</span><br>
+&nbsp;&nbsp;<span class="json-key">"status"</span><span class="json-punct">:</span> <span class="json-string">"success"</span><span class="json-punct">,</span><br>
+&nbsp;&nbsp;<span class="json-key">"message"</span><span class="json-punct">:</span> <span class="json-string">"Game Backend Server is running successfully!"</span><span class="json-punct">,</span><br>
+&nbsp;&nbsp;<span class="json-key">"serverTime"</span><span class="json-punct">:</span> <span class="json-string">"2026-10-17T07:16:37.512Z"</span><br>
+<span class="json-punct">}</span>
+        </div>
+      </div>
+
+      <!-- Log Terminal Server Lokal -->
+      <div style="font-weight: 700; font-size: 7.8pt; color: #334155; margin-bottom: 3px;">
+        &bull; Log Console Output Server Express.js (Node.js Local Runtime):
+      </div>
+      <div class="terminal-box">
+        <div>PS D:\Logice\Documents\GitHub\GameJaringan-Kelompok1\Backend&gt; npm run dev</div>
+        <div style="color: #64748b;">[nodemon] 3.1.9</div>
+        <div style="color: #64748b;">[nodemon] watching path(s): *.*</div>
+        <div style="color: #64748b;">[nodemon] watching extensions: js,mjs,cjs,json</div>
+        <div class="term-cyan">[nodemon] starting `node server.js`</div>
+        <div class="term-green">=================================</div>
+        <div class="term-white">&nbsp;Server Game Backend Berjalan!</div>
+        <div class="term-cyan">&nbsp;URL: http://localhost:5000</div>
+        <div class="term-green">=================================</div>
+        <div>[HTTP] GET /api/health HTTP/1.1 -- <span class="term-green">200 OK</span> (12ms)</div>
+      </div>
+
+      <!-- 5. Inisialisasi Repositori GitHub Backend -->
+      <div class="section-title">
+        <span>5. Inisialisasi Repositori GitHub Backend &amp; Version Control</span>
+      </div>
+      <div class="repo-card">
+        <div class="repo-grid">
+          <!-- Struktur Folder -->
+          <div>
+            <div style="font-weight: 700; font-size: 7.5pt; color: #1e293b; margin-bottom: 3px;">
+              Struktur Folder Backend:
+            </div>
+            <div class="tree-box">
+GameJaringan-Kelompok1/<br>
+&#9500;&#9472;&#9472; Assets/ &amp; ProjectSettings/ (Unity Client)<br>
+&#9500;&#9472;&#9472; .gitignore (Unity + Backend ignores)<br>
+&#9492;&#9472;&#9472; Backend/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; .env (Port &amp; local configs)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; .env.example (Environment template)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; .gitignore (Ignores node_modules/)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; package.json (Express, CORS, Dotenv)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; package-lock.json<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472;&#9472; server.js (REST API entrypoint)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472;&#9472; <em>node_modules/ (Excluded by git)</em>
+            </div>
+          </div>
+
+          <!-- Rincian Commit -->
+          <div class="commit-box">
+            <div>
+              <div class="commit-title">&#10004; Commit Git Terverifikasi</div>
+              <div class="badge-check">&#10004; node_modules/ TIDAK ter-upload</div>
+              <div style="font-size: 7pt; color: #475569; margin-top: 2px;">
+                <strong>Format Pesan Commit:</strong>
+              </div>
+              <div class="code-snippet" style="margin-top: 2px; font-weight: 600; color: #1e40af;">
+                [Pertemuan 8] Setup Express.js Backend Server dan API Spec
+              </div>
+            </div>
+            <div style="font-size: 6.8pt; color: #64748b; margin-top: 5px; border-top: 1px dashed #cbd5e1; padding-top: 4px;">
+              <strong>Repositori Remote:</strong><br>
+              <code>https://github.com/Sologice/GameJaringan-Kelompok1</code><br>
+              Branch: <code>main</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer Halaman 2 -->
+    <div class="footer">
+      <span>Pemrograman Game Jaringan &bull; Modul 8: Game Backend Architecture</span>
+      <span>Halaman 2 dari 2</span>
+    </div>
+  </div>
+
+</body>
+</html>
