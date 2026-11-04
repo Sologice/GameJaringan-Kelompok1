@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1476187048
+  GlobalObjectIdHash: 1513514989
   InScenePlacedSourceGlobalObjectIdHash: 1476187048
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -288,6 +288,7 @@ MonoBehaviour:
   moveSpeed: 5
   Rb2D: {fileID: 0}
   inputs: {fileID: 0}
+  wallInnerY: 3.5
 --- !u!114 &855356316953379731
 MonoBehaviour:
   m_ObjectHideFlags: 0
