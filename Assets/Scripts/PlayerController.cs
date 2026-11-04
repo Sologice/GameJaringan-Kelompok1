@@ -12,6 +12,7 @@ public class PlayerController : NetworkBehaviour
     public const int StartHealth = 10;                 // GDD: 10 HP
     public NetworkVariable<int> health = new(StartHealth);
     public NetworkVariable<float> mana = new(0);
+    public NetworkVariable<int> score = new(0);   // <-- NEW (tidak memengaruhi menang/kalah)
     [SerializeField] private HealthManaUI HMUI;
 
     [Header("Mana Settings")]
@@ -137,6 +138,11 @@ public class PlayerController : NetworkBehaviour
 
     // ---------------------------------------------------------------- Server-side helpers
     // Called by Ball / GameManager (they already run on the server)
+    public void ServerAddScore(int amount)
+    {
+        if (!IsServer || amount <= 0) return;
+        score.Value += amount;
+    }
 
     public void ServerAddMana(float amount)
     {
@@ -156,6 +162,7 @@ public class PlayerController : NetworkBehaviour
         if (!IsServer) return;
         health.Value = StartHealth;
         mana.Value = 0f;
+        score.Value = 0;
         ResetPositionClientRpc();
     }
 

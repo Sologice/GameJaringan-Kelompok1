@@ -136,6 +136,7 @@ public class PlayerCards : NetworkBehaviour
 
         Controller.ServerAddMana(-def.ManaCost);
         effect.Execute(ctx);
+        Controller.ServerAddScore(ScoreRules.CardPlayed);   // NEW: +15 untuk skill yang berhasil
 
         deckLocked = true;
         deck.Play(slot);

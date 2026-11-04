@@ -364,6 +364,7 @@ public class Ball : NetworkBehaviour
         RemoveExpiredModifiers();
 
         player.ServerAddMana(1f); // GDD: +1 mana per successful hit
+        player.ServerAddScore(ScoreRules.PaddleDeflect);     // NEW: +10 per deflect
 
         // Giant Paddle / Magnet Shield bookkeeping for the paddle that was hit
         bool magnet = player.Effects != null && player.Effects.ServerRegisterBallHit();

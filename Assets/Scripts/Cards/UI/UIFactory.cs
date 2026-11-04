@@ -127,4 +127,51 @@ public static class UIFactory
             default:                  return "Arena";
         }
     }
+
+    public static TMP_InputField MakeInputField(Transform parent, string name, string placeholder, bool isPassword)
+    {
+        var go = new GameObject(name, typeof(RectTransform), typeof(UnityEngine.UI.Image), typeof(TMP_InputField));
+        go.transform.SetParent(parent, false);
+
+        var bg = go.GetComponent<UnityEngine.UI.Image>();
+        bg.color = new Color(0.15f, 0.18f, 0.25f, 1f);
+
+        // Text Area (viewport)
+        var textAreaGO = new GameObject("Text Area", typeof(RectTransform));
+        textAreaGO.transform.SetParent(go.transform, false);
+        var textArea = (RectTransform)textAreaGO.transform;
+        textArea.anchorMin = Vector2.zero;
+        textArea.anchorMax = Vector2.one;
+        textArea.offsetMin = new Vector2(16, 8);
+        textArea.offsetMax = new Vector2(-16, -8);
+
+        // Placeholder
+        var phGO = new GameObject("Placeholder", typeof(RectTransform));
+        phGO.transform.SetParent(textArea, false);
+        Stretch((RectTransform)phGO.transform);
+        var ph = phGO.AddComponent<TextMeshProUGUI>();
+        ph.text = placeholder;
+        ph.fontSize = 30;
+        ph.color = new Color(0.55f, 0.55f, 0.6f);
+        ph.alignment = TextAlignmentOptions.Left;
+
+        // Text
+        var textGO = new GameObject("Text", typeof(RectTransform));
+        textGO.transform.SetParent(textArea, false);
+        Stretch((RectTransform)textGO.transform);
+        var txt = textGO.AddComponent<TextMeshProUGUI>();
+        txt.fontSize = 30;
+        txt.color = Color.white;
+        txt.alignment = TextAlignmentOptions.Left;
+
+        var input = go.GetComponent<TMP_InputField>();
+        input.textViewport = textArea;
+        input.textComponent = txt;
+        input.placeholder = ph;
+        input.targetGraphic = bg;
+        input.lineType = TMP_InputField.LineType.SingleLine;
+        if (isPassword) input.contentType = TMP_InputField.ContentType.Password;
+
+        return input;
+    }
 }
