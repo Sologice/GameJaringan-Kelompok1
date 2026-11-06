@@ -59,9 +59,18 @@ public class MainMenuUI : MonoBehaviour
 
         MakeMenuButton(background, "Play", new Color(0.2f, 0.7f, 0.35f), new Vector2(0, -20), OnPlay);
 
-#if !UNITY_WEBGL
-        MakeMenuButton(background, "Quit", new Color(0.55f, 0.2f, 0.2f), new Vector2(0, -140), OnQuit);
-#endif
+        #if !UNITY_WEBGL
+                MakeMenuButton(background, "Quit", new Color(0.55f, 0.2f, 0.2f), new Vector2(0, -140), OnQuit);
+        #endif
+
+        // Tombol Logout (pojok kiri bawah MainMenu)
+        var logoutButton = UIFactory.MakeButton(background, "LogoutButton",
+            new Color(0.5f, 0.2f, 0.2f), OnLogoutClicked);
+        UIFactory.Place((RectTransform)logoutButton.transform,
+            new Vector2(0f, 0f), new Vector2(0f, 0f),
+            new Vector2(240, 70), new Vector2(30, 30));
+        var logoutLabel = UIFactory.MakeText(logoutButton.transform, "Logout", 28, Color.white, TextAlignmentOptions.Center);
+        UIFactory.Stretch(logoutLabel.rectTransform);
     }
 
     private static void MakeMenuButton(Transform parent, string text, Color color, Vector2 position, UnityEngine.Events.UnityAction onClick)
@@ -103,5 +112,12 @@ public class MainMenuUI : MonoBehaviour
     {
         if (networkUI != null) networkUI.ResetToStart();
         canvas.gameObject.SetActive(true);
+    }
+
+    private void OnLogoutClicked()
+    {
+        PlayerSession.Clear();
+        Debug.Log("[MainMenu] Logout — kembali ke AuthScene.");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("AuthScene");
     }
 }

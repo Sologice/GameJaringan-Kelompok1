@@ -27,7 +27,8 @@ public class AuthSceneUI : MonoBehaviour
     private void Awake()
     {
         BuildUI();
-
+        Debug.Log($"[AuthScene] Awake — IsLoggedIn = {PlayerSession.IsLoggedIn}, UserId = {PlayerSession.UserId}, Username = {PlayerSession.Username}");
+        
         // Kalau sudah login sebelumnya (PlayerPrefs persist), langsung ke MainScene
         if (PlayerSession.IsLoggedIn)
         {

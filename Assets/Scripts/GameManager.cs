@@ -235,23 +235,31 @@ public class GameManager : NetworkBehaviour
             ? NetworkManager.ServerClientId
             : players.Keys.First(id => id != NetworkManager.ServerClientId);
 
+        ulong scorerId = players.Keys.First(id => id != scoredOn);
+
         var victim = players[scoredOn];
         victim.ServerTakeDamage(1);
         victim.ServerAddMana(manaOnConcede);
 
+        // ---- SCORE (efek samping, TIDAK menentukan pemenang) ----
+        players.TryGetValue(scorerId, out var scorer);
+        if (scorer != null) scorer.ServerAddScore(ScoreRules.GoalScored);
+
+        // ---- Kondisi menang/kalah TETAP berbasis HP ----
         if (victim.health.Value <= 0)
         {
             ResetRoundEffects();
             ball.Stop();
 
-            WinnerClientId.Value = players.Keys.First(id => id != scoredOn);
+            WinnerClientId.Value = scorerId;
+            if (scorer != null) scorer.ServerAddScore(ScoreRules.MatchWinBonus);
+
             rematchVotes.Clear();
             RematchVotes.Value = 0;
             State.Value = GameState.GameOver;
             return;
         }
 
-        // Ball respawns on the paddle of the player who just conceded
         BeginServe(scoredOn);
     }
 

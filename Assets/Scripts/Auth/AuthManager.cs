@@ -87,6 +87,7 @@ public class AuthManager : MonoBehaviour
             if (resp != null && resp.status == "success" && resp.userId > 0)
             {
                 PlayerSession.Save(resp.userId, username, resp.token ?? "");
+                Debug.Log($"[AuthManager] Login OK. userId={resp.userId}, username={username}");   // ← TAMBAH INI
                 onResult?.Invoke(true, $"Selamat datang, {username}!", resp.userId);
             }
             else
