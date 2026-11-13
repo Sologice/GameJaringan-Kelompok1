@@ -15,11 +15,11 @@ public class LeaderboardManager : MonoBehaviour
     [SerializeField] private string baseURL = "http://localhost:5000/api";
 
     [Header("UI References")]
-    [SerializeField] private Transform  contentParent;         // ScrollView/Viewport/Content
-    [SerializeField] private GameObject leaderboardItemPrefab; // the prefab from B.4
+    [SerializeField] private Transform  leaderboardContainer;   // ScrollView/Viewport/Content
+    [SerializeField] private GameObject leaderboardPrefab;      // the prefab from B.4
+    [SerializeField] private GameObject loadingLabel;           // optional "Loading..." text
+    [SerializeField] private GameObject emptyLabel;             // optional "No scores yet"
     [SerializeField] private Button     refreshButton;
-    [SerializeField] private GameObject loadingLabel;          // optional "Loading..." text
-    [SerializeField] private GameObject emptyLabel;            // optional "No scores yet"
 
     private void Start()
     {
@@ -29,7 +29,6 @@ public class LeaderboardManager : MonoBehaviour
 
     private void OnEnable()
     {
-        // Auto-load whenever the panel is shown
         FetchLeaderboard();
     }
 
@@ -41,9 +40,9 @@ public class LeaderboardManager : MonoBehaviour
     private IEnumerator GetLeaderboardRoutine()
     {
         // Guard: refs must be wired in the Inspector
-        if (contentParent == null || leaderboardItemPrefab == null)
+        if (leaderboardContainer == null || leaderboardPrefab == null)
         {
-            Debug.LogError("[LeaderboardManager] contentParent / leaderboardItemPrefab not assigned!");
+            Debug.LogError("[LeaderboardManager] leaderboardContainer / leaderboardPrefab not assigned!");
             yield break;
         }
 
@@ -90,13 +89,13 @@ public class LeaderboardManager : MonoBehaviour
     private void PopulateScrollView(List<LeaderboardEntry> entries)
     {
         // 1. Destroy old rows (from previous refresh)
-        foreach (Transform child in contentParent)
+        foreach (Transform child in leaderboardContainer)
             Destroy(child.gameObject);
 
         // 2. Instantiate one row per entry
         for (int i = 0; i < entries.Count; i++)
         {
-            GameObject row = Instantiate(leaderboardItemPrefab, contentParent);
+            GameObject row = Instantiate(leaderboardPrefab, leaderboardContainer);
             var itemUI = row.GetComponent<LeaderboardItemUI>();
             if (itemUI != null)
                 itemUI.SetData(i + 1, entries[i].username, entries[i].highScore);

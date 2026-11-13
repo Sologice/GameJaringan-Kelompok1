@@ -27,10 +27,10 @@ public class HealthManaUI : MonoBehaviour
     private void Start()
     {
         if (!manaFill) 
-            manaFill = GameObject.Find("HP Fill").GetComponentInChildren<Image>();
+            manaFill = GameObject.Find("Mana Fill").GetComponentInChildren<Image>();
 
         if (!manaBackground) 
-            manaBackground = GameObject.Find("HP Background").GetComponentInChildren<Image>();
+            manaBackground = GameObject.Find("Mana Background").GetComponentInChildren<Image>();
         
         if (healthList.Count != currentHealth)
         {
