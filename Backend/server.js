@@ -143,20 +143,24 @@ app.get('/api/score/highscore/:userId', (req, res) => {
   });
 });
 
-// --- LEADERBOARD GLOBAL (opsional) ---
+// --- GET LEADERBOARD (TOP 10 HIGH SCORES, ONE ROW PER PLAYER) ---
 app.get('/api/leaderboard', (req, res) => {
   const sql = `
-    SELECT u.username, MAX(s.score) AS score
+    SELECT u.username, MAX(s.score) AS highScore
     FROM scores s
-    JOIN users u ON u.id = s.user_id
+    JOIN users u ON s.user_id = u.id
     GROUP BY s.user_id
-    ORDER BY score DESC
+    ORDER BY highScore DESC
     LIMIT 10
   `;
+
   db.all(sql, [], (err, rows) => {
     if (err) {
-      console.error('[LEADERBOARD ERROR]', err.message);
-      return res.status(500).json({ status: 'error', message: 'Gagal mengambil leaderboard.' });
+      console.error('Gagal mengambil leaderboard:', err.message);
+      return res.status(500).json({
+        status: 'error',
+        message: 'Gagal mengambil data leaderboard.'
+      });
     }
     res.status(200).json({ status: 'success', data: rows });
   });
